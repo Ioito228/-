@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой пропуск | Ростелеком</title>
+    <style>
+        /* ВСТРОЕННЫЕ СТИЛИ (CSS) */
+        :root { --rt-purple: #7700FF; --rt-orange: #FF4F12; --rt-bg: #F0F2F5; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            background-color: var(--rt-bg);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; padding: 20px;
+            transition: filter 0.3s;
+        }
+        .card {
+            background: white; padding: 32px 24px; border-radius: 24px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+            width: 100%; max-width: 380px; text-align: center;
+        }
+        .rtk-logo { font-size: 26px; font-weight: 800; color: var(--rt-purple); margin-bottom: 24px; }
+        h3 { margin-bottom: 5px; color: #333; }
+        .btn {
+            background: linear-gradient(90deg, var(--rt-purple), var(--rt-orange));
+            color: white; border: none; padding: 16px; border-radius: 14px;
+            width: 100%; font-weight: bold; font-size: 16px; cursor: pointer;
+            margin-top: 15px; transition: opacity 0.2s;
+        }
+        #qr-image {
+            width: 100%; max-width: 240px; margin: 20px auto;
+            display: block; border: 4px solid #f9f9f9; border-radius: 12px;
+        }
+        .hidden { display: none; }
+        .blur-effect { filter: blur(25px); pointer-events: none; }
+        #timer { font-weight: bold; color: var(--rt-orange); margin-top: 10px; font-size: 14px; }
+        .logout-btn { margin-top: 20px; color: #ff4d4d; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="rtk-logo">Ростелеком</div>
+        <h3 id="u-name">Загрузка...</h3>
+        <p id="u-pos" style="color: gray; font-size: 14px;"></p>
+        
+        <div id="qr-box">
+            <img id="qr-image" class="hidden">
+            <p id="timer"></p>
+        </div>
+        
+        <button onclick="generateQR()" class="btn">ПОЛУЧИТЬ ПРОПУСК</button>
+        <a onclick="logout()" class="logout-btn">Выйти из системы</a>
+    </div>
+
+    <script>
+        /* ВСТРОЕННАЯ ЛОГИКА (JS) */
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        // Если пользователь не залогинен — отправляем на вход
+        if (!user) {
+            window.location.href = '/login.html';
+        } else {
+            document.getElementById('u-name').innerText = user.full_name;
+            document.getElementById('u-pos').innerText = user.position;
+        }
+
+        let interval;
+
+        async function generateQR() {
+            try {
+                const res = await fetch(`/api/generate_qr/${user.id}`);
+                const data = await res.json();
+                const img = document.getElementById('qr-image');
+                
+                img.src = "data:image/png;base64," + data.qr;
+                img.classList.remove('hidden');
+                
+                let sec = data.expires;
+                clearInterval(interval);
+                interval = setInterval(() => {
+                    sec--;
+                    document.getElementById('timer').innerText = `Истекает через: ${sec}с`;
+                    if (sec <= 0) { resetQR(); }
+                }, 1000);
+            } catch (e) {
+                alert("Ошибка сервера. Проверьте соединение.");
+            }
+        }
+
+        function resetQR() {
+            clearInterval(interval);
+            const img = document.getElementById('qr-image');
+            img.src = "";
+            img.classList.add('hidden');
+            document.getElementById('timer').innerText = "Пропуск аннулирован";
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/login.html';
+        }
+
+        // ЗАЩИТА: Скрываем QR при переключении вкладок
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                resetQR();
+                alert("Безопасность: QR-код удален, так как вы покинули страницу.");
+            }
+        });
+
+        // ЗАЩИТА: Размытие при потере фокуса окна
+        window.onblur = () => document.body.classList.add('blur-effect');
+        window.onfocus = () => document.body.classList.remove('blur-effect');
+    </script>
+</body>
+</html>

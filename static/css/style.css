@@ -1,0 +1,107 @@
+/* В самом верху style.css */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 15px; /* Чтобы карточка не прилипала к краям экрана смартфона */
+}
+
+.card {
+    background: white;
+    padding: 30px 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 360px; /* На ПК будет узкой, на телефоне — на весь экран */
+}
+:root {
+    --rt-purple: #7700FF;
+    --rt-orange: #FF4F12;
+    --rt-bg: #F0F2F5;
+    --white: #FFFFFF;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--rt-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.card {
+    background: var(--white);
+    padding: 32px 24px;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    width: 100%;
+    max-width: 380px; /* Ограничение ширины на десктопе */
+    text-align: center;
+}
+
+.rtk-logo {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--rt-purple);
+    margin-bottom: 24px;
+}
+
+h3 { margin-bottom: 20px; color: #333; }
+
+input {
+    width: 100%;
+    padding: 14px;
+    margin: 8px 0;
+    border: 1px solid #E0E0E0;
+    border-radius: 12px;
+    font-size: 16px;
+    outline: none;
+    transition: border 0.3s;
+}
+
+input:focus { border-color: var(--rt-purple); }
+
+.btn {
+    background: linear-gradient(90deg, var(--rt-purple), var(--rt-orange));
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 14px;
+    width: 100%;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: opacity 0.3s;
+}
+
+.btn:active { opacity: 0.8; }
+
+#qr-image {
+    width: 100%;
+    max-width: 240px;
+    margin: 20px auto;
+    display: block;
+    border: 4px solid var(--rt-bg);
+    border-radius: 12px;
+}
+
+.hidden { display: none; }
+.blur-effect { filter: blur(25px); pointer-events: none; }
+
+#timer {
+    font-weight: bold;
+    color: var(--rt-orange);
+    margin-top: 10px;
+}
+
+a { color: var(--rt-purple); text-decoration: none; font-size: 14px; }
